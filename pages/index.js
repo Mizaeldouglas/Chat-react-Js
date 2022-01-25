@@ -1,35 +1,10 @@
 import appConfig from "../confg.json";
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { useState } from "react";
+import { useRouter } from "next/router"
 
 
-function GlobalStyle() {
-    return (
-      <style global jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          list-style: none;
-        }
-        body {
-          font-family: 'Open Sans', sans-serif;
-        }
-        /* App fit Height */ 
-        html, body, #__next {
-          min-height: 100vh;
-          display: flex;
-          flex: 1;
-        }
-        #__next {
-          flex: 1;
-        }
-        #__next > * {
-          flex: 1;
-        }
-        /* ./App fit Height */ 
-      `}</style>
-    );
-  }
+
 
 function Titulo(props){
     const Tag = props.tag || 'h1'
@@ -71,18 +46,32 @@ function Titulo(props){
 //   export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'Mizaeldouglas';
+    // const username = 'Mizaeldouglas';
+    const [username ,setUsername] = useState('Mizaeldouglas')
+    const roteamento = useRouter()
+
+  function caracteries (arr,funcao){
+    for(let i =0;i <arr.length; i= i +1){
+      const itemDoArrey = arr[i]
+      funcao(itemDoArrey,i)
+    }
+  }
+  const retornoCaracteries = caracteries(setUsername, function(caracters, i){
+    console.log(caracters,i)
+    return
+  })
   
     return (
       <>
-        <GlobalStyle />
         <Box
           styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', 
             backgroundColor: appConfig.theme.colors.primary[500],
             backgroundImage: 'url(https://cutewallpaper.org/23/a-long-time-ago-in-a-galaxy-far-far-away-wallpaper/599720050.jpg)',
-            backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+            backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%', backgroundBlendMode: 'multiply',
+          
           }}
+          
         >
           <Box
             styleSheet={{
@@ -102,7 +91,15 @@ export default function PaginaInicial() {
           >
             {/* Formulário */}
             <Box
-              as="form"
+            as="form"
+            onSubmit={function (infosdoEvento){
+              infosdoEvento.preventDefault()
+              console.log("alguem submeteu o for")
+              
+              console.log(retornoCaracteries)
+
+              roteamento.push('/chat')
+            }}
               styleSheet={{
                 
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -113,9 +110,35 @@ export default function PaginaInicial() {
               <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                 {appConfig.name}
               </Text>
-  
-              <TextField
+              
+              {/* <input 
+              type="text"
+              value={username}
+              onChange={function (e){
+                console.log('digitou',e.target.value)
+                //valor da variavel
+                const valor = e.target.value;
+                // trocar o valor da variavel
+                setUsername(valor)
+              }}
+              /> */}
+
+
+
+               <TextField
                 fullWidth
+                value={username}
+              onChange={function (e){
+                console.log('digitou',e.target.value)
+                //valor da variavel
+                const valor = e.target.value;
+                // menor que 2 caracteries
+                if(e.target.value < 3){
+                  console.log('error')
+                }
+                // trocar o valor da variavel
+                setUsername(valor)
+              }}
                 textFieldColors={{
                   neutral: {
                     textColor: appConfig.theme.colors.neutrals[200],
@@ -124,7 +147,7 @@ export default function PaginaInicial() {
                     backgroundColor: appConfig.theme.colors.neutrals[800],
                   },
                 }}
-              />
+              /> 
               <Button
                 type='submit'
                 label='Entrar'
