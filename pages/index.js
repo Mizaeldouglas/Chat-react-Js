@@ -2,6 +2,7 @@ import appConfig from "../confg.json";
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import { useState } from "react";
 import { useRouter } from "next/router"
+import img from "../img/Intro.gif"
 
 
 
@@ -67,7 +68,7 @@ export default function PaginaInicial() {
           styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', 
             backgroundColor: appConfig.theme.colors.primary[500],
-            backgroundImage: 'url(https://cutewallpaper.org/23/a-long-time-ago-in-a-galaxy-far-far-away-wallpaper/599720050.jpg)',
+            backgroundImage: 'url(https://media.giphy.com/media/l1uguGf2RVIsTXNDO/giphy.gif)',
             backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%', backgroundBlendMode: 'multiply',
           
           }}
