@@ -1,28 +1,56 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
+import { createClient } from '@supabase/supabase-js';
 import React, { useState } from 'react';
 import appConfig from '../confg.json';
 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4NzU3MiwiZXhwIjoxOTU4ODYzNTcyfQ.59CP6iBtx62d50_3RJaGjqypY86KlshSIN8h2ZwSbaI'
+const SUPABASE_URL = 'https://httdkeocymtmvtfxnrvx.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL,SUPABASE_ANON_KEY)
+
+
+
 export default function ChatPage() {
     // Sua lógica vai aqui
+
+
         const [mensagem, setMensagem] = useState('')
         const [username ,setUsername] = useState('Mizaeldouglas')
         const [listaDeMensagens ,setListaDeMensagens] = React.useState([])
 
-     
-       
+
+        React.useEffect(() =>{
+            supabaseClient
+               .from('mensagens')
+               .select('*')
+               .order('id',{ ascending:false })
+               .then(({data,}) =>{
+                    console.log("dados da consuldas")
+                    setListaDeMensagens(data)
+               })
+        }, [])
+
 
         function handleNovaMensagem(novaMensagem){
             const mensagem = {
-                id: listaDeMensagens.length +1,
+                //id: listaDeMensagens.length +1,
                 de: username,
                 texto: novaMensagem,
 
             }
-            setListaDeMensagens([
-                mensagem,
-                ...listaDeMensagens,
-            ])
-            setMensagem('')
+            supabaseClient 
+                .from('mensagens')
+                .insert([
+                    // tem que ser um objeto com os MESMO CAMPOS que você escreveu no supabese
+                    mensagem
+                ])
+                .then(({ data })=>{
+                    console.log('criando mensagem: ')
+                    setListaDeMensagens([
+                        data[0],
+                        ...listaDeMensagens
+                    ])
+                })
+                setMensagem('')
         
         }
     // ./Sua lógica vai aqui
@@ -170,6 +198,12 @@ function MessageList(props)  {
             ...novaLista
         ])
     }
+
+    const { data, error } =  supabaseClient 
+    .from('mensagem')
+    .delete(handleDeleteMessage)
+    .match({  })
+   
    
 
     return (
@@ -211,7 +245,7 @@ function MessageList(props)  {
                             display: 'inline-block',
                             marginRight: '8px',
                         }}
-                        src={`https://github.com/${username}.png`}
+                        src={`https://github.com/${mensagem.de}.png`}
                     />
                     <Text tag="strong">
                         {mensagem.de}
@@ -230,14 +264,16 @@ function MessageList(props)  {
                 {mensagem.texto} 
                 <Button
                     styleSheet={{
-                       
+                        display: 'flex',
+                        justifyContent:'center',
+                        alignItems:'center',
                         marginLeft:'95%',
-                        marginBottom:'20px',
+                        transition: '0.6s ease',
                         hover: {
                             backgroundColor: appConfig.theme.colors.neutrals[700],
                         }
                     }}
-                    onClick={() => handleDeleteMessage(mensagem.id)}
+                    onClick={(data) => handleDeleteMessage(mensagem.id)}
                     type='reset'
                     variant='tertiary'
                     colorVariant='neutral'
