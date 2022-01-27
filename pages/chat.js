@@ -30,8 +30,8 @@ export default function ChatPage() {
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: appConfig.theme.colors.primary[100],
-                backgroundImage: 'url(https://media.giphy.com/media/26FxzFK4yudFHRFde/giphy.gif)',
+                backgroundColor: appConfig.theme.colors.primary[200],
+                backgroundImage: 'url(https://media.giphy.com/media/S3PBXqHjKL9GZhK2Yv/giphy.gif)',
                 backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['900']
             }}
@@ -230,8 +230,9 @@ function MessageList(props)  {
                 {mensagem.texto} 
                 <Button
                     styleSheet={{
+                       
                         marginLeft:'95%',
-                        marginBottom:'30px',
+                        marginBottom:'20px',
                         hover: {
                             backgroundColor: appConfig.theme.colors.neutrals[700],
                         }
