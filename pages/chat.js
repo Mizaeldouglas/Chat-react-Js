@@ -5,9 +5,11 @@ import appConfig from '../confg.json';
 export default function ChatPage() {
     // Sua lógica vai aqui
         const [mensagem, setMensagem] = useState('')
-        const [listaDeMensagens ,setListaDeMensagens] = React.useState([])
         const [username ,setUsername] = useState('Mizaeldouglas')
+        const [listaDeMensagens ,setListaDeMensagens] = React.useState([])
 
+     
+       
 
         function handleNovaMensagem(novaMensagem){
             const mensagem = {
@@ -64,8 +66,13 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-
-                    <MessageList mensagens={listaDeMensagens} />
+                        {/* MensageList list é para colocar os useState em outra funçao */}
+                    
+                    
+                    <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />
+                   
+                   
+                   
                     {/* {listaDeMensagens.map((mensagemAtual ) =>{
                         console.log(mensagemAtual.id);
                         return(
@@ -75,11 +82,12 @@ export default function ChatPage() {
                         )
                     })}  */}
 
-
+                    
 
 
 
                     <Box
+                    
                         as="form"
                         styleSheet={{
                             display: 'flex',
@@ -121,6 +129,7 @@ export default function ChatPage() {
                     colorVariant='neutral'
                     label='Enviar'
                 />
+                
                     </Box>
                 </Box>
             </Box>
@@ -146,9 +155,23 @@ function Header() {
     )
 }
 
-function MessageList(props) {
+function MessageList(props)  {
     const [username ,setUsername] = useState('Mizaeldouglas')
     console.log(props.listaDeMensagens);
+    
+    function handleDeleteMessage(mensagemId){
+        let novaLista = props.mensagens.filter((message)=>{
+            if(message.id !== mensagemId){
+                return message
+            }
+        })
+
+        props.setListaDeMensagens([
+            ...novaLista
+        ])
+    }
+   
+
     return (
         <Box
             tag="ul"
@@ -161,7 +184,7 @@ function MessageList(props) {
                 marginBottom: '16px',
             }}
         >
-            {props.mensagens.map((mensagem) =>{
+            {props.mensagens.map((mensagem ) =>{
                 return(
                     <Text
                 key={mensagem.id}
@@ -204,7 +227,21 @@ function MessageList(props) {
                         {(new Date().toLocaleDateString())}
                     </Text>
                 </Box>
-                {mensagem.texto}
+                {mensagem.texto} 
+                <Button
+                    styleSheet={{
+                        marginLeft:'95%',
+                        marginBottom:'30px',
+                        hover: {
+                            backgroundColor: appConfig.theme.colors.neutrals[700],
+                        }
+                    }}
+                    onClick={() => handleDeleteMessage(mensagem.id)}
+                    type='reset'
+                    variant='tertiary'
+                    colorVariant='neutral'
+                    label='🗑'
+                />
             </Text>
                 )
             })}
