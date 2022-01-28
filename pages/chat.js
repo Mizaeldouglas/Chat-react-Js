@@ -1,4 +1,4 @@
-import { Box, Text, TextField, Image, Button } from '@skynexui/components';
+import { Box, Text, TextField, Image, Button,Icon } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js';
 import React, { useState } from 'react';
 import appConfig from '../confg.json';
@@ -125,14 +125,32 @@ export default function ChatPage() {
                         {/* MensageList list é para colocar os useState em outra funçao */}
                     {loading ?
                     <Box
-                    styleSheet={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backgroundColor: appConfig.theme.colors.primary[200],
-                        backgroundImage: 'url(https://media.giphy.com/media/6fScAIQR0P0xW/giphy.gif)',
-                        backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%', backgroundBlendMode: 'multiply',
-                        color: appConfig.theme.colors.neutrals['900']
-                    }}
-                />
+                        styleSheet={{
+                            width: '150px',
+                            height: '150px',
+                            display: 'flex',
+                            alignItems:'center',
+                            justifyContent:'column',
+                            padding: '260px 20px',
+                            margin: '0px 400px',
+                        }}
+                    >    
+                        <Image
+                            src='https://media.giphy.com/media/u6DUcQbPPRHUAwe2tg/giphy.gif'
+                            styleSheet={{
+                                marginRight:'40px',
+                                borderRadius:'50%',
+                                opacity: 1,
+                            }}
+                            >
+
+                            </Image>
+                            <Text
+                            variant='heading1'
+                            >
+                                Loading...
+                            </Text>
+                        </Box>   
                     :
                     
                      <MessageList mensagens={listaDeMensagens} handleDeleteMessagem = { handleDeleteMessagem }  /> 
@@ -276,46 +294,65 @@ function MessageList(props)  {
                 >
                     <Image
                         styleSheet={{
-                            width: '20px',
-                            height: '20px',
+                            width: '50px',
+                            height: '50px',
                             borderRadius: '50%',
                             display: 'inline-block',
                             marginRight: '8px',
+                            hover:{
+                                width: '200px',
+                                height: '200px',
+                                transition: 'width 1s, height 2s',
+                                
+                            }
                         }}
                         src={`https://github.com/${mensagem.de}.png`}
                     />
-                    <Text tag="strong">
+                    
+                    <Text tag="strong"
+                    styleSheet={{
+                        fontSize: '25px',
+                        marginLeft: '8px',
+                    }}
+
+                    >
                         {mensagem.de}
                     </Text>
+                    
                     <Text
                         styleSheet={{
-                            fontSize: '10px',
+                            fontSize: '20px',
                             marginLeft: '8px',
                             color: appConfig.theme.colors.neutrals[300],
                         }}
                         tag="span"
                     >
+                        
                         {(new Date().toLocaleDateString())}
                     </Text>
-                </Box>
-                {mensagem.texto} 
-                <Button
+                    <Icon
                     styleSheet={{
-                        display: 'flex',
-                        justifyContent:'center',
-                        alignItems:'center',
-                        marginLeft:'95%',
-                        transition: '0.6s ease',
+                    width: '15px',
+                    height: '15px',
+                    marginLeft: '20px',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    marginRight: '8px',
+                    cursor: 'pointer',
                         hover: {
                             backgroundColor: appConfig.theme.colors.neutrals[700],
                         }
                     }}
                     onClick={() => handleDeleteMessagem(mensagem)}
-                    type='reset'
+                    name='FaTrashAlt'
                     variant='tertiary'
                     colorVariant='neutral'
-                    label='🗑'
+                    
                 />
+                </Box>
+         
+        {mensagem.texto} 
+                
                 
             </Text>
                 )
