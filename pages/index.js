@@ -47,8 +47,9 @@ function Titulo(props){
 
 export default function PaginaInicial() {
     // const username = 'Mizaeldouglas';
-    const [username ,setUsername] = useState('Mizaeldouglas')
+    const [username ,setUsername] = useState('')
     const roteamento = useRouter()
+    const ImagemVazia ='https://media.giphy.com/media/26FLh6p0NIYPlecCs/giphy.gif'
 
   function caracteries (arr,funcao){
     for(let i =0;i <arr.length; i= i +1){
@@ -98,7 +99,7 @@ export default function PaginaInicial() {
               
               console.log(retornoCaracteries)
 
-              roteamento.push('/chat')
+              roteamento.push(`/chat?username=${username}`)
             }}
               styleSheet={{
                 
@@ -184,7 +185,7 @@ export default function PaginaInicial() {
                   borderRadius: '50%',
                   marginBottom: '16px',
                 }}
-                src={`https://github.com/${username}.png`}
+                src={username.length > 2 ?` https://github.com/${username}.png` : ImagemVazia }
               />
               <Text
                 variant="body4"

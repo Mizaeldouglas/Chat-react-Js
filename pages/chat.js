@@ -2,7 +2,8 @@ import { Box, Text, TextField, Image, Button,Icon } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js';
 import React, { useState } from 'react';
 import appConfig from '../confg.json';
-import { ThreeDots } from 'react-loading-icons'
+import { useRouter } from 'next/router';
+
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4NzU3MiwiZXhwIjoxOTU4ODYzNTcyfQ.59CP6iBtx62d50_3RJaGjqypY86KlshSIN8h2ZwSbaI'
 const SUPABASE_URL = 'https://httdkeocymtmvtfxnrvx.supabase.co'
@@ -15,9 +16,10 @@ export default function ChatPage() {
 
 
         const [mensagem, setMensagem] = useState('')
-        const [username ,setUsername] = useState('Mizaeldouglas')
         const [listaDeMensagens ,setListaDeMensagens] = React.useState([])
-      const [loading,setLoading] = useState(true)
+        const [loading,setLoading] = useState(true)
+        const roteamento = useRouter();
+        const {username} = roteamento.query;
 
         React.useEffect(() =>{
             supabaseClient
@@ -42,11 +44,6 @@ export default function ChatPage() {
 
             }
 
-            
-            
-            
-            
-            
             supabaseClient 
             .from('mensagens')
             .insert([
@@ -153,7 +150,7 @@ export default function ChatPage() {
                         </Box>   
                     :
                     
-                     <MessageList mensagens={listaDeMensagens} handleDeleteMessagem = { handleDeleteMessagem }  /> 
+                     <MessageList mensagens={listaDeMensagens} user={username}  handleDeleteMessagem = { handleDeleteMessagem }  /> 
                     }
 
                     
@@ -209,6 +206,7 @@ export default function ChatPage() {
                          <Button
                          onClick={(e)=>{
                              if(e.type === 'click'){
+                                e.preventDefault();
                                  handleNovaMensagem(mensagem)
                              }
                          }}
@@ -300,9 +298,9 @@ function MessageList(props)  {
                             display: 'inline-block',
                             marginRight: '8px',
                             hover:{
-                                width: '200px',
-                                height: '200px',
-                                transition: 'width 1s, height 2s',
+                                width: '100px',
+                                height: '100px',
+                                transition: 'width 2s, height 2s',
                                 
                             }
                         }}
