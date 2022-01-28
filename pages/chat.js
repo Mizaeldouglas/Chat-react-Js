@@ -2,6 +2,7 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js';
 import React, { useState } from 'react';
 import appConfig from '../confg.json';
+import { ThreeDots } from 'react-loading-icons'
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4NzU3MiwiZXhwIjoxOTU4ODYzNTcyfQ.59CP6iBtx62d50_3RJaGjqypY86KlshSIN8h2ZwSbaI'
 const SUPABASE_URL = 'https://httdkeocymtmvtfxnrvx.supabase.co'
@@ -16,7 +17,7 @@ export default function ChatPage() {
         const [mensagem, setMensagem] = useState('')
         const [username ,setUsername] = useState('Mizaeldouglas')
         const [listaDeMensagens ,setListaDeMensagens] = React.useState([])
-
+      const [loading,setLoading] = useState(true)
 
         React.useEffect(() =>{
             supabaseClient
@@ -25,9 +26,12 @@ export default function ChatPage() {
                .order('id',{ ascending:false })
                .then(({data,}) =>{
                     console.log("dados da consuldas")
+                    if (data != null){
                     setListaDeMensagens(data)
-               })
-        }, [])
+               }
+                 setLoading(false)
+                })
+            }, [])
 
 
         function handleNovaMensagem(novaMensagem){
@@ -37,21 +41,41 @@ export default function ChatPage() {
                 texto: novaMensagem,
 
             }
+
+            
+            
+            
+            
+            
             supabaseClient 
-                .from('mensagens')
-                .insert([
-                    // tem que ser um objeto com os MESMO CAMPOS que você escreveu no supabese
-                    mensagem
+            .from('mensagens')
+            .insert([
+                // tem que ser um objeto com os MESMO CAMPOS que você escreveu no supabese
+                mensagem
+            ])
+            .then(({ data })=>{
+                console.log('criando mensagem: ')
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
                 ])
-                .then(({ data })=>{
-                    console.log('criando mensagem: ')
-                    setListaDeMensagens([
-                        data[0],
-                        ...listaDeMensagens
-                    ])
-                })
-                setMensagem('')
-        
+            })
+            setMensagem('')
+            
+        }
+        function handleDeleteMessagem(mensagemAtual) {
+            supabaseClient
+                .from('mensagens')
+                .delete()
+                .match({id: mensagemAtual.id})
+                .then(({data}) => {
+                    const messagesListFiltered = listaDeMensagens.filter((message) => {
+                        return message.id != data[0].id
+                    });
+                    setListaDeMensagens(messagesListFiltered);
+                });
+    
+            
         }
     // ./Sua lógica vai aqui
     return (
@@ -81,6 +105,7 @@ export default function ChatPage() {
                 }}
             >
                 <Header />
+             
                 <Box
                     styleSheet={{
                         
@@ -94,10 +119,26 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
+                    
+
+
                         {/* MensageList list é para colocar os useState em outra funçao */}
+                    {loading ?
+                    <Box
+                    styleSheet={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backgroundColor: appConfig.theme.colors.primary[200],
+                        backgroundImage: 'url(https://media.giphy.com/media/6fScAIQR0P0xW/giphy.gif)',
+                        backgroundRepeat: 'no-repeat', backgroundSize: '100% 100%', backgroundBlendMode: 'multiply',
+                        color: appConfig.theme.colors.neutrals['900']
+                    }}
+                />
+                    :
                     
+                     <MessageList mensagens={listaDeMensagens} handleDeleteMessagem = { handleDeleteMessagem }  /> 
+                    }
+
                     
-                    <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />
                    
                    
                    
@@ -184,25 +225,21 @@ function Header() {
 }
 
 function MessageList(props)  {
-    const [username ,setUsername] = useState('Mizaeldouglas')
     console.log(props.listaDeMensagens);
-    
-    function handleDeleteMessage(mensagemId){
-        let novaLista = props.mensagens.filter((message)=>{
-            if(message.id !== mensagemId){
-                return message
-            }
-        })
+    const handleDeleteMessagem =props.handleDeleteMessagem
+    // function handleDeleteMessage(mensagemId){
+    //     let novaLista = props.mensagens.filter((message)=>{
+    //         if(message.id !== mensagemId){
+    //             return message
+    //         }
+    //     })
 
-        props.setListaDeMensagens([
-            ...novaLista
-        ])
-    }
+    //     props.setListaDeMensagens([
+    //         ...novaLista
+    //     ])
+    // }
 
-    const { data, error } =  supabaseClient 
-    .from('mensagem')
-    .delete(handleDeleteMessage)
-    .match({  })
+  
    
    
 
@@ -273,12 +310,13 @@ function MessageList(props)  {
                             backgroundColor: appConfig.theme.colors.neutrals[700],
                         }
                     }}
-                    onClick={(data) => handleDeleteMessage(mensagem.id)}
+                    onClick={() => handleDeleteMessagem(mensagem)}
                     type='reset'
                     variant='tertiary'
                     colorVariant='neutral'
                     label='🗑'
                 />
+                
             </Text>
                 )
             })}
